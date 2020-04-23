@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
 import firebase from 'firebase';
-import * as Google from "expo-google-app-auth"
+import * as Google from "expo-google-app-auth";
+import * as Facebook from 'expo-facebook';
 
 class LoginScreen extends Component {
 
@@ -18,6 +19,7 @@ class LoginScreen extends Component {
     }
     return false;
 }
+
 
      onSignIn = googleUser => {
     console.log('Google Auth Response', googleUser);
@@ -93,10 +95,54 @@ class LoginScreen extends Component {
         return { error: true };
     }
 }
+
+     logIn= () => {
+    try {
+         Facebook.initializeAsync('2926256467492608');
+        const {
+            type,
+            token,
+        
+        } = Facebook.logInWithReadPermissionsAsync({
+            permissions: ['public_profile'],
+        });
+        if (type === 'success') {
+            // Get the user's name using Facebook's Graph API
+            const response = fetch(`https://graph.facebook.com/me?access_token=${token}`);
+            Alert.alert('Logged in!', `Hi ${( response.json()).name}!`);
+        } else {
+            // type === 'cancel'
+        }
+    } catch ({ message }) {
+        alert(`Facebook Login Error: ${message}`);
+    }
+}
+
+
+
+
+async loginWithFacebook(){
+        const { type , token } = Facebook.loginWithReadPermissionsAsync
+            ('2926256467492608' , { permissions: ['public_profile'] } )
+
+        if (type == 'success' ) {
+
+            const credential = firebase.auth.FacebookAuthProvider.credential(token)
+            firebase.auth().signInWithCredential(credential).catch(error => {
+                console.log(error);
+            })
+        }
+
+}
+
     render() {
         return (
             <View style={styles.container}>
                 <Button title='sign in with google' onPress={()=> this.signInWithGoogleAsync()}
+                />
+            
+
+                <Button title='sign in with Facebook' onPress={() => this.logIn()}
                 />
             </View>
         );

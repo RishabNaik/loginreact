@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "expo": "~37.0.3",
+    "expo-facebook": "^8.1.0",
     "expo-google-app-auth": "^8.1.0",
     "firebase": "^7.14.1",
     "react": "~16.9.0",
